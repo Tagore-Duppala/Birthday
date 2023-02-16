@@ -1,0 +1,46 @@
+Sub SendBirthdayWishes()
+
+    Dim OutApp As Object
+    Dim OutMail As Object
+    Dim strto As String
+    Dim strcc As String
+    Dim strbcc As String
+    Dim strsub As String
+    Dim strbody As String
+    Dim rowcount As Long
+    Dim i As Long
+    Dim attachmentPath As String
+    
+    attachmentPath = "C:\BirthdayCard.pdf" ' Update with the path to your attachment
+    
+    Set OutApp = CreateObject("Outlook.Application")
+    
+    rowcount = Worksheets("Sheet1").UsedRange.Rows.Count
+    
+    For i = 2 To rowcount
+        If Format(Date, "dd-mm") = Format(Worksheets("Sheet1").Cells(i, 3), "dd-mm") Then
+            Set OutMail = OutApp.CreateItem(0)
+            
+            strto = Worksheets("Sheet1").Cells(i, 2)
+            strcc = ""
+            strbcc = ""
+            strsub = "Happy Birthday!"
+            strbody = "Dear " & Worksheets("Sheet1").Cells(i, 1) & "," & vbCrLf & vbCrLf & "Wishing you a very happy birthday and a year filled with joy and happiness. Enjoy your special day!" & vbCrLf & vbCrLf & "Best regards," & vbCrLf & "Your Name"
+            
+            With OutMail
+                .To = strto
+                .CC = strcc
+                .BCC = strbcc
+                .Subject = strsub
+                .Body = strbody
+                .Attachments.Add (attachmentPath) ' Add the attachment
+                .Send
+            End With
+            
+            Set OutMail = Nothing
+        End If
+    Next i
+    
+    Set OutApp = Nothing
+
+End Sub
