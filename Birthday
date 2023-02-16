@@ -1,0 +1,45 @@
+Sub SendBirthdayEmails()
+    Dim objOutlook As Object
+    Dim objMail As Object
+    Dim birthdayRange As Range
+    Dim cel As Range
+    Dim strTo As String
+    Dim strSubject As String
+    Dim strBody As String
+    Dim strAttachmentPath As String
+    
+    ' Set the path to the attachment file
+    strAttachmentPath = "C:\Path\To\Attachment\File.txt"
+    
+    Set objOutlook = CreateObject("Outlook.Application")
+    Set birthdayRange = Range("B2:B10")
+    
+    For Each cel In birthdayRange
+        ' Check if the birthday is today
+        If cel.Value = Date Then
+            ' Get the email address, name, and subject from the worksheet
+            strTo = cel.Offset(0, 1).Value
+            strSubject = "Happy Birthday, " & cel.Offset(0, -1).Value & "!"
+            
+            ' Create the email body text
+            strBody = "Dear " & cel.Offset(0, -1).Value & "," & vbCrLf & vbCrLf
+            strBody = strBody & "Happy birthday! We hope you have a wonderful day." & vbCrLf & vbCrLf
+            strBody = strBody & "Best regards," & vbCrLf & vbCrLf
+            strBody = strBody & "Your Name"
+            
+            ' Create a new email message and attach the file
+            Set objMail = objOutlook.CreateItem(0)
+            With objMail
+                .To = strTo
+                .Subject = strSubject
+                .Body = strBody
+                .Attachments.Add strAttachmentPath ' add the attachment
+                .Send ' send the email
+            End With
+            
+            Set objMail = Nothing
+        End If
+    Next cel
+    
+    Set objOutlook = Nothing
+End Sub
